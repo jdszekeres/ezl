@@ -3,6 +3,6 @@ easy to learn simple programming language
 # install
 clone this reposetory
 # run
-‘‘‘ bash
+``` bash
 python3 ezl.py filename.ezl
-’’’
+```
