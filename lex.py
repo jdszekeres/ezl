@@ -184,7 +184,7 @@ class TokenType(enum.Enum):
     WHILE = 109
     REPEAT = 110
     ENDWHILE = 111
-    IPDATA = 112
+    LETSTR = 112
     # Operators.
     EQ = 201  
     PLUS = 202

@@ -152,13 +152,11 @@ class Parser:
             if self.curToken.text not in self.symbols:
                 self.symbols.add(self.curToken.text)
                 self.emitter.headerLine("int " + self.curToken.text + ";")
+            # "let" for strings
 
-            self.emitter.emit(self.curToken.text + " = ")
-            self.match(TokenType.IDENT)
-            self.match(TokenType.EQ)
-            
-            self.expression()
-            self.emitter.emitLine(";")
+           
+            self.emitter.emit(";")
+            self.emitter.emitLine("")
 
         # "INPUT" ident
         elif self.checkToken(TokenType.INPUT):

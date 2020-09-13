@@ -4,7 +4,7 @@ from parse import *
 import sys
 import os
 def main():
-    print("Teeny Tiny Compiler")
+    print("EZL Compiler")
 
     if len(sys.argv) != 2:
         sys.exit("Error: Compiler needs source file as argument.")
