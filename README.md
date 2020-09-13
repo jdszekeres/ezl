@@ -13,6 +13,7 @@ cd ezl
 ./filename
 ```
 # examples
+calculator
 ```
 PRINT "enter the first digit"
 INPUT num
