@@ -13,3 +13,11 @@ cd ezl
 ``` bash
 ./filename
 ```
+# examples
+```
+PRINT "enter the first digit"
+INPUT num
+PRINT "type one for addition, two for subtraction"
+PRINT "three for multiplication", and four for division"
+print "..."
+```
