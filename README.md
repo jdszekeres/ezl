@@ -23,15 +23,15 @@ INPUT type
 PRINT "what is your second number"
 INPUT numtwo
 IF type == 1.0 THEN
-	 PRINT num + numtwo
+	PRINT num + numtwo
 ENDIF
 IF type == 2.0 THEN
-	 PRINT num - numtwo
+	PRINT num - numtwo
 ENDIF
 IF type == 3.0 THEN
-	 PRINT num * numtwo
+	PRINT num * numtwo
 ENDIF
 IF type == 4.0 THEN
-	 PRINT num / numtwo
+	PRINT num / numtwo
 ENDIF
 ```
