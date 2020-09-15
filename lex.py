@@ -85,6 +85,8 @@ class Lexer:
             while self.curChar != '\"':
                 # Don't allow special characters in the string. No escape characters, newlines, tabs, or %.
                 # We will be using C's printf on this string.
+                #if self.curChar == '\r' or self.curChar == '\n' or self.curChar == '\t' or self.curChar == '\\' or self.curChar == '%' and  self.curChar != '/0':
+                    #self.abort("Illegal character in string.")
                 self.nextChar()
 
             tokText = self.source[startPos : self.curPos] # Get the substring.
@@ -182,7 +184,7 @@ class TokenType(enum.Enum):
     WHILE = 109
     REPEAT = 110
     ENDWHILE = 111
-    LETSTR = 112
+    WAIT = 112
     # Operators.
     EQ = 201  
     PLUS = 202
