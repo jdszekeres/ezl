@@ -9,8 +9,8 @@ statement ::= "PRINT" (expression | string) nl
             | "WAIT" expression nl  
 comparison ::= expression (("==" | "!=" | ">" | ">=" | "<" | "<=") expression)+
 expression ::= term {( "-" | "+" ) term}
-term ::= unary {( "/" | "*" ) unary}
-unary ::= ["+" | "-" | “**”] primary
+term ::= unary {( "/" | "*" | "%") unary}
+unary ::= ["+" | "-"] primary
 primary ::= number | ident
 nl ::= '\n'+
  
