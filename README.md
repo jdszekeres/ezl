@@ -35,4 +35,4 @@ IF type == 4.0 THEN
 	PRINT num / numtwo
 ENDIF
 ```
-
+see more in [examples folder](https://github.com/jdszekeres/ezl/blob/master/examples/)
