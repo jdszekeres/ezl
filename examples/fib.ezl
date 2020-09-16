@@ -1,4 +1,4 @@
-RINT "How many fibonacci numbers do you want?"
+PRINT "How many fibonacci numbers do you want?"
 INPUT nums
 PRINT ""
 LET a = 0
