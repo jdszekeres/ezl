@@ -53,3 +53,15 @@ usage
 PRINT "sleeping for 10 seconds"
 WAIT 10
 PRINT "done sleeping"
+```
+### expressions
+#### +
+addition in ezl
+#### -
+subtraction in ezl
+#### *
+multiplication in ezl
+#### /
+division in ezl
+#### %
+remainder/modulus in ezl
