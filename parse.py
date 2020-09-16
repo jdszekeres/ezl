@@ -48,12 +48,9 @@ class Parser:
 
     # program ::= {statement}
     def program(self):
-        
-        #self.emitter.headerLine("#include <iostream>")
         self.emitter.headerLine("#include <stdio.h>")
+        self.emitter.headerLine("#include<math.h>") 
         self.emitter.headerLine("#include <unistd.h>")
-        self.emitter.headerLine("#include <string.h>")
-        self.emitter.headerLine("#include<math.h>")      
         self.emitter.headerLine("int main(void){")
         
         # Since some newlines are required in our grammar, need to skip the excess.
@@ -92,8 +89,7 @@ class Parser:
                 self.emitter.emit("printf(\"%" + ".2f\\n\", (float)(")
                 self.expression()
                 self.emitter.emitLine("));")
-        elif self.checkToken(TokenType.WAIT):
-            self.nextToken()
+        elif self.checkToken(TokenType.WAIT): self.nextToken()
             if self.checkToken(TokenType.FLOAT):
                 self.emitter.emitLine("sleep(" + self.curToken.text + ");")
                 self.nextToken()
@@ -160,13 +156,18 @@ class Parser:
             if self.curToken.text not in self.symbols:
                 self.symbols.add(self.curToken.text)
                 self.emitter.headerLine("int " + self.curToken.text + ";")
-            # "let" for strings
 
-           
+            self.emitter.emit(self.curToken.text + " = ")
+            self.match(TokenType.IDENT)
+            self.match(TokenType.EQ)
+            
+            self.expression()
+            self.emitter.emitLine(";")
 
         # "INPUT" ident
         elif self.checkToken(TokenType.INPUT):
             self.nextToken()
+
             # If variable doesn't already exist, declare it.
             if self.curToken.text not in self.symbols:
                 self.symbols.add(self.curToken.text)
