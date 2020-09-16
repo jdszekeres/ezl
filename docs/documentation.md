@@ -36,6 +36,7 @@ usage
 LET a = 2
 PRINT a
 #output: 2.00
+```
 ### WHILE
 while statment in ezl
 usage
@@ -45,3 +46,10 @@ WHILE a < 10 REPEAT
     PRINT a
 ENDWHILE
 ```
+### WAIT
+sleep in ezl
+usage
+```
+PRINT "sleeping for 10 seconds"
+WAIT 10
+PRINT "done sleeping"
