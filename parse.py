@@ -23,7 +23,7 @@ class Parser:
     # Return true if the next token matches.
     def checkPeek(self, kind):
         return kind == self.peekToken.kind
-
+ 
     # Try to match current token. If not, error. Advances the current token.
     def match(self, kind):
         if not self.checkToken(kind):
