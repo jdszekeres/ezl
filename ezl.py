@@ -3,6 +3,8 @@ from emit import *
 from parse import *
 import sys
 import os
+def status(text):
+    print( u"\u001b[32m"+text+"\u001b[0m")
 def main():
     print("EZL Compiler")
 
@@ -19,8 +21,13 @@ def main():
 
     parser.program() # Start the parser.
     emitter.writeFile() # Write the output to file.
+    status("written to file")
     os.system("gcc "+sys.argv[1].split(".")[0]+".c -o "+ sys.argv[1].split(".")[0])
+    status("compiled")
     os.system("chmod +x "+sys.argv[1].split(".")[0])
-    print("Compiling completed.")
+    status("made execuatable")
+    print("run this as ", end="")
+    print("./"+sys.argv[1].split(".")[0])
+   
 
 main()

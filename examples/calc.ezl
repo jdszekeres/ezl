@@ -7,9 +7,7 @@ PRINT "..."
 INPUT type
 PRINT "what is your second number"
 INPUT numtwo
-/*multi line comment
-line 2
-*/
+CCODE "sleep (1);"
 IF type == 1.0 THEN
 	PRINT num + numtwo
 ENDIF

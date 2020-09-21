@@ -31,6 +31,7 @@ class Lexer:
     def getToken(self):
         self.skipWhitespace()
         self.skipComment()
+        self.skipMultilineComment()
         token = None
 
         # Check the first character of this token to see if we can decide what it is.
@@ -146,9 +147,11 @@ class Lexer:
         if self.curChar == '#':
             while self.curChar != '\n':
                 self.nextChar()
-        if self.curChar == '/*':
-            while self.curPos != '*/':
+    def skipMultilineComment(self):
+        if self.curChar == '[':
+            while self.curPos != ']':
                 self.nextChar()
+        
 
 
 # Token contains the original text and the type of token.
@@ -188,6 +191,7 @@ class TokenType(enum.Enum):
     REPEAT = 110
     ENDWHILE = 111
     WAIT = 112
+    CCODE = 113
     # Operators.
     EQ = 201  
     PLUS = 202

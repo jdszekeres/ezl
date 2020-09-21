@@ -89,6 +89,11 @@ class Parser:
                 self.emitter.emit("printf(\"%" + ".2f\\n\", (float)(")
                 self.expression()
                 self.emitter.emitLine("));")
+        elif self.checkToken(TokenType.CCODE):
+            self.nextToken()
+            if self.checkToken(TokenType.STRING):
+                self.emitter.emitLine(self.curToken.text)
+                self.nextToken()
         elif self.checkToken(TokenType.WAIT): 
             self.nextToken()
             if self.checkToken(TokenType.FLOAT):
