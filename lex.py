@@ -146,6 +146,9 @@ class Lexer:
         if self.curChar == '#':
             while self.curChar != '\n':
                 self.nextChar()
+        if self.curChar == '/*':
+            while self.curPos != '*/':
+                self.nextChar()
 
 
 # Token contains the original text and the type of token.
