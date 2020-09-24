@@ -2,6 +2,7 @@
 
 ### PRINT
 print statment in ezl
+
 usage 
 ```
 PRINT "HELLO WOLRD"
