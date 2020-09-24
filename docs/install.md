@@ -18,6 +18,6 @@ pip3 install pyinstaller
 ```
 * build
 ``` bash
-python3 -m pyinstaller --onefile ezl.py
+python3 -m pyinstaller --onefile -c ezl.py
 ```
 * your executable is in the dist folder
