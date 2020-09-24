@@ -51,6 +51,7 @@ class Parser:
         self.emitter.headerLine("#include <stdio.h>")
         self.emitter.headerLine("#include<math.h>") 
         self.emitter.headerLine("#include <unistd.h>")
+        self.emitter.headerLine('#include <time.h>')
         self.emitter.headerLine("int main(void){")
         
         # Since some newlines are required in our grammar, need to skip the excess.

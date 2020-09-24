@@ -25,7 +25,7 @@ PRINT num
 if statement in ezl
 usage
 ```
-IF 10.0 == 10.0 THEN
+IF 100.0 == 10.0 THEN
     PRINT "you should not be seeing this."
 ENDIF
 ```
@@ -44,6 +44,7 @@ usage
 LET a = 0
 WHILE a < 10 REPEAT
     PRINT a
+    a = a + 1
 ENDWHILE
 ```
 ### WAIT
