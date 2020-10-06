@@ -5,22 +5,24 @@
 import sys
 from lex import *
 import time
+import json
 # Parser object keeps track of current token, checks if the code matches the grammar, and emits code along the way.
 class Parser:
-    def __init__(self, lexer, emitter):
+    def __init__(self, lexer):
         self.lexer = lexer
-        self.emitter = emitter
+        
         self.line = 0
         self.symbols = set()    # All variables we have declared so far.
         self.labelsDeclared = set() # Keep track of all labels declared
         self.labelsGotoed = set() # All labels goto'ed, so we know if they exist or not.
-
+        
         self.curToken = None
         self.peekToken = None
         self.nextToken()
         self.nextToken()    # Call this twice to initialize current and peek.
+        self.hidden = dict({})
         self.main = dict({
-            "hello": "ls"
+            
         })
     # Return true if the current token matches.
     def checkToken(self, kind):
@@ -83,8 +85,10 @@ class Parser:
            
             
             try:
-                print(str(self.main[self.curToken.text]))
+                print(str(self.hidden[self.curToken.text]))
+                self.main["PRINT line "+str(self.line)] = self.hidden[self.curToken.text]
             except:
+                self.main["PRINT line "+str(self.line)] = str(self.curToken.text)
                 print(str(self.curToken.text))
             self.nextToken()
 
@@ -92,53 +96,52 @@ class Parser:
         #raise error
         elif self.checkToken(TokenType.RAISE):
             self.nextToken()
+            self.main["RAISE error line "+str(self.line)] = self.curToken.text
             raise SystemError(self.curToken.text) 
             self.nextToken()
+        elif self.checkToken(TokenType.IF):
+            def string(str_var):
+               return str("\""+str_var+"\"")
+            def is_integer(n):
+                try:
+                    float(n)
+                except ValueError:
+                    return False
+                else:
+                    return True
+            self.nextToken()
+             
+            #print(self.curToken.text)
+            query  = str("")
+            while not self.checkToken(TokenType.THEN):
+                try:
+                    query = query+string(self.hidden[self.curToken.text])
+                except:
+                    if "=" in self.curToken.text:
+                        query = query+self.curToken.text
+                    else:
+                        if is_integer(self.curToken.text):
+                            query = query+str(float(self.curToken.text))
+                        else:
+                            query = query+string(self.curToken.text)
+                self.nextToken()
+            
+            self.main["IF line "+str(self.line)] = str(eval(query))
+            if eval(query):
+                self.nextToken()
+                self.nl()
+                while not self.checkToken(TokenType.ENDIF):
+                    self.statement()
+                self.nextToken()
         #WAIT float
         #wait before contining
         elif self.checkToken(TokenType.WAIT): 
             self.nextToken()
             if self.checkToken(TokenType.FLOAT):
+                self.main["WAIT line "+str(self.line)] = str(self.curToken.text)
                 time.sleep(float(self.curToken.text))
                 self.nextToken()
-        # "IF" comparison "THEN" block "ENDIF"
-        elif self.checkToken(TokenType.IF):
-            self.nextToken()
-            self.emitter.emit("if(")
-            self.comparison()
-
-            self.match(TokenType.THEN)
-            self.nl()
-            self.emitter.emitLine("){")
-
-            # Zero or more statements in the body.
-            while not self.checkToken(TokenType.ENDIF):
-                self.statement()
-
-            self.match(TokenType.ENDIF)
-            self.emitter.emitLine("}")
-
-        # "WHILE" comparison "REPEAT" block "ENDWHILE"
-        elif self.checkToken(TokenType.WHILE):
-            
-            self.nextToken()
-            self.emitter.emit("while(")
-            self.comparison()
-
-            self.match(TokenType.REPEAT)
-            self.nl()
-            self.emitter.emitLine("){")
-
-            # Zero or more statements in the loop body.
-            while not self.checkToken(TokenType.ENDWHILE):
-                self.statement()
-
-            self.match(TokenType.ENDWHILE)
-            self.emitter.emitLine("}")
-
-        
-
-        # "LET" ident = expression
+ # "LET" ident = expression
         elif self.checkToken(TokenType.LET):
             self.nextToken()
 
@@ -153,11 +156,13 @@ class Parser:
             self.match(TokenType.EQ)
             
             if self.checkToken(TokenType.STRING):
-                self.main[var] = self.curToken.text
+                self.hidden[var] = self.curToken.text
+                self.main["varible "+var] = self.hidden[var]
                 self.nextToken()
             else:
-                 self.expression()
-                 self.main[var] = self.curToken.text
+                self.expression()
+                self.hidden[var] = self.curToken.text
+                self.main["varible "+var] = self.hidden[var]
 
 
         # "INPUT" ident
@@ -167,9 +172,15 @@ class Parser:
             # If variable doesn't already exist, declare it.
             if self.curToken.text not in self.symbols:
                 self.symbols.add(self.curToken.text)
-                self.main[self.curToken.text] = input("")
+                self.hidden[self.curToken.text] = input("")
+                self.main["varible "+self.curToken.text] = self.hidden[self.curToken.text]
             self.match(TokenType.IDENT)
-
+        elif self.checkToken(TokenType.EXPORT):
+            self.nextToken()
+            if self.checkToken(TokenType.STRING):
+                with open(self.curToken.text, "w+") as f:
+                    json.dump(self.main, indent = 4, fp = f)
+            self.nextToken()
         # This is not a valid statement. Error!
         else:
             self.abort("Invalid statement at " + self.curToken.text + " (" + self.curToken.kind.name + ") in line "+str(self.line))
@@ -184,12 +195,12 @@ class Parser:
         self.expression()
         # Must be at least one comparison operator and another expression.
         if self.isComparisonOperator():
-            self.emitter.emit(self.curToken.text)
+            yield self.curtoken.text()
             self.nextToken()
             self.expression()
         # Can have 0 or more comparison operator and expressions.
         while self.isComparisonOperator():
-            self.emitter.emit(self.curToken.text)
+            yield self.curToken.text
             self.nextToken()
             self.expression()
 
@@ -199,7 +210,7 @@ class Parser:
         self.term()
         # Can have 0 or more +/- and expressions.
         while self.checkToken(TokenType.PLUS) or self.checkToken(TokenType.MINUS):
-            self.emitter.emit(self.curToken.text)
+            yield self.curToken.text
             self.nextToken()
             self.term()
 
@@ -209,7 +220,7 @@ class Parser:
         self.unary()
         # Can have 0 or more *// and expressions.
         while self.checkToken(TokenType.ASTERISK) or self.checkToken(TokenType.SLASH) or self.checkToken(TokenType.MOD):
-            self.emitter.emit(self.curToken.text)
+            yield self.curToken.text
             self.nextToken()
             self.unary()
 
@@ -218,7 +229,7 @@ class Parser:
     def unary(self):
         # Optional unary +/-
         if self.checkToken(TokenType.PLUS) or self.checkToken(TokenType.MINUS):
-            self.emitter.emit(self.curToken.text)
+            yield self.curToken.text
             self.nextToken()        
         self.primary()
 
@@ -226,14 +237,14 @@ class Parser:
     # primary ::= number | ident
     def primary(self):
         if self.checkToken(TokenType.FLOAT): 
-            self.emitter.emit(self.curToken.text)
+            yield self.curToken.text
             self.nextToken()
         elif self.checkToken(TokenType.IDENT):
             # Ensure the variable already exists.
             if self.curToken.text not in self.symbols:
                 self.abort("Referencing variable before assignment: " + self.curToken.text)
 
-            self.emitter.emit(self.curToken.text)
+            return self.curToken.text
             self.nextToken()
         else:
             # Error!
