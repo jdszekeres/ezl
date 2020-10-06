@@ -134,6 +134,12 @@ class Parser:
                 while not self.checkToken(TokenType.ENDIF):
                     self.statement()
                 self.nextToken()
+            else:
+                self.nextToken()
+                self.nl()
+                while not self.checkToken(TokenType.ENDIF):
+                    pass
+                self.nextToken()
         #WAIT float
         #wait before contining
         elif self.checkToken(TokenType.WAIT): 

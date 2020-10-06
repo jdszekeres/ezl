@@ -1,5 +1,5 @@
 LET hello = "hello"
-LET pi = 3.14159265
+
 
 PRINT "finish this phrase"
 PRINT hello
@@ -8,10 +8,9 @@ WAIT 1
 
 
 IF guess == "world" THEN
-    PRINT "TRUE"
+    PRINT "Yes that is corect"
 ENDIF
-IF 1 == 1 THEN
-    PRINT pi
-ENDIF
+#IF guess != "world" THEN
+#    PRINT "no that is incorect"
+#ENDIF
 EXPORT "myfile.json"
-
