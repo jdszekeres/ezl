@@ -110,6 +110,7 @@ class Parser:
                 else:
                     return True
             self.nextToken()
+             
             #print(self.curToken.text)
             query  = str("")
             while not self.checkToken(TokenType.THEN):
