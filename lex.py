@@ -90,7 +90,7 @@ class Lexer:
 
             tokText = self.source[startPos : self.curPos] # Get the substring.
             token = Token(tokText, TokenType.STRING)
-
+        #elif self.curChar == "T" or Self.curChar == "F":
         elif self.curChar.isdigit():
             # Leading character is a digit, so this must be a number.
             # Get all consecutive digits and decimal if there is one.
@@ -131,6 +131,7 @@ class Lexer:
             token = Token('', TokenType.EOF)
         else:
             # Unknown token!
+
             self.abort("Unknown token: " + self.curChar)
 
         self.nextChar()
@@ -147,8 +148,8 @@ class Lexer:
                 self.nextChar()
     #not working
     def skipMultilineComment(self):
-        if self.curChar == '[':
-            while self.curPos != ']':
+        if self.curChar == "/*":
+            while self.curChar != "*/":
                 self.nextChar()
         
 
@@ -171,10 +172,10 @@ class TokenType(enum.Enum):
     EOF = -1
     NEWLINE = 0
     FLOAT = 1
-    INT = 2
-    IDENT = 3
-    STRING = 4
     
+    IDENT = 2
+    STRING = 3
+    BOOL = 4
     # Keywords.
     LABEL = 101
     GOTO = 102
@@ -184,12 +185,12 @@ class TokenType(enum.Enum):
     IF = 106
     THEN = 107
     ENDIF = 108
-    WHILE = 109
-    REPEAT = 110
-    ENDWHILE = 111
-    WAIT = 112
-    CCODE = 113
-    RAISE = 114
+    REPEAT = 109
+    ENDREPEAT = 110
+    WAIT = 111
+    CCODE = 112
+    RAISE = 113
+    EXPORT = 114
     # Operators.
     EQ = 201  
     PLUS = 202

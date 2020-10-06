@@ -1,7 +1,7 @@
 # Author: Jackson szekeres
 #purpose: main file of ezl
 from lex import *
-from emit import *
+
 from parse import *
 import sys
 import os
@@ -10,7 +10,7 @@ def status(text):
     print( u"\u001b[32m"+text+"\u001b[0m")
 #main function
 def main():
-    status("EZL Compiler")
+    #status("EZL Compiler")
     # if not enough arguments sys.exit
     if len(sys.argv) < 2:
         sys.exit("Error: Compiler needs source file as argument.")
@@ -21,8 +21,8 @@ def main():
 
     # Initialize the lexer, emitter, and parser.
     lexer = Lexer(input)
-    emitter = Emitter(None)
-    parser = Parser(lexer, emitter)
+    
+    parser = Parser(lexer)
 
     parser.program() # Start the parser.
 
