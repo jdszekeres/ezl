@@ -87,7 +87,9 @@ class Parser:
             try:
                 print(str(self.hidden[self.curToken.text]))
                 self.main["PRINT line "+str(self.line)] = self.hidden[self.curToken.text]
+
                 self.nextToken()
+
             except:
                 self.main["PRINT line "+str(self.line)] = str(self.curToken.text)
                 print(str(self.curToken.text))
@@ -161,6 +163,7 @@ class Parser:
                 self.main["varible "+var] = self.hidden[var]
                 self.nextToken()
             else:
+
                 
                 
                 self.hidden[var] = self.curToken.text
@@ -168,6 +171,7 @@ class Parser:
                 self.nextToken()
             #print(self.curToken.text)   
             #self.nextToken()
+
 
 
         # "INPUT" ident
@@ -200,7 +204,9 @@ class Parser:
         self.expression()
         # Must be at least one comparison operator and another expression.
         if self.isComparisonOperator():
+
             
+
             self.nextToken()
             self.expression()
         # Can have 0 or more comparison operator and expressions.
