@@ -1,5 +1,4 @@
-# compiled to executable by pyinstaller and run by python3 in a command line interface
-# ezl
+# EZL
 easy to learn simple programming language
 # install
 use the executable in directory
