@@ -20,7 +20,7 @@ class Parser:
         self.nextToken()
         self.nextToken()    # Call this twice to initialize current and peek.
         self.main = dict({
-            
+            "hello": "ls"
         })
     # Return true if the current token matches.
     def checkToken(self, kind):
@@ -87,8 +87,7 @@ class Parser:
             except:
                 print(str(self.curToken.text))
             self.nextToken()
-        #CCODE (STRING)
-        #run code in c directly
+
         #RAISE (STRING)
         #raise error
         elif self.checkToken(TokenType.RAISE):
@@ -138,24 +137,6 @@ class Parser:
             self.emitter.emitLine("}")
 
         
-        # "LABEL" ident
-        elif self.checkToken(TokenType.LABEL):
-            self.nextToken()
-
-            # Make sure this label doesn't already exist.
-            if self.curToken.text in self.labelsDeclared:
-                self.abort("Label already exists: " + self.curToken.text)
-            self.labelsDeclared.add(self.curToken.text)
-
-            self.emitter.emitLine(self.curToken.text + ":")
-            self.match(TokenType.IDENT)
-
-        # "GOTO" ident
-        elif self.checkToken(TokenType.GOTO):
-            self.nextToken()
-            self.labelsGotoed.add(self.curToken.text)
-            self.emitter.emitLine("goto " + self.curToken.text + ";")
-            self.match(TokenType.IDENT)
 
         # "LET" ident = expression
         elif self.checkToken(TokenType.LET):
@@ -164,14 +145,20 @@ class Parser:
             #  Check if ident exists in symbol table. If not, declare it.
             if self.curToken.text not in self.symbols:
                 self.symbols.add(self.curToken.text)
-                self.emitter.headerLine("int " + self.curToken.text + ";")
+                var = self.curToken.text
+                #self.main[var] = ""
 
-            self.emitter.emit(self.curToken.text + " = ")
+           
             self.match(TokenType.IDENT)
             self.match(TokenType.EQ)
             
-            self.expression()
-            self.emitter.emitLine(";")
+            if self.checkToken(TokenType.STRING):
+                self.main[var] = self.curToken.text
+                self.nextToken()
+            else:
+                 self.expression()
+                 self.main[var] = self.curToken.text
+
 
         # "INPUT" ident
         elif self.checkToken(TokenType.INPUT):
@@ -180,14 +167,7 @@ class Parser:
             # If variable doesn't already exist, declare it.
             if self.curToken.text not in self.symbols:
                 self.symbols.add(self.curToken.text)
-                self.emitter.headerLine("float " + self.curToken.text + ";")
-
-            # Emit scanf but also validate the input. If invalid, set the variable to 0 and clear the input.
-            self.emitter.emitLine("if(0 == scanf(\"%" + "f\", &" + self.curToken.text + ")) {")
-            self.emitter.emitLine(self.curToken.text + " = 0;")
-            self.emitter.emit("scanf(\"%")
-            self.emitter.emitLine("*s\");")
-            self.emitter.emitLine("}")
+                self.main[self.curToken.text] = input("")
             self.match(TokenType.IDENT)
 
         # This is not a valid statement. Error!

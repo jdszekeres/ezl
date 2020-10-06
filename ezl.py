@@ -10,7 +10,7 @@ def status(text):
     print( u"\u001b[32m"+text+"\u001b[0m")
 #main function
 def main():
-    print("EZL Compiler")
+    status("EZL Compiler")
     # if not enough arguments sys.exit
     if len(sys.argv) < 2:
         sys.exit("Error: Compiler needs source file as argument.")

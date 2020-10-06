@@ -1,3 +1,6 @@
+LET hello = "lovie dovie"
 PRINT hello
+INPUT pi
+PRINT pi
 WAIT 1
 PRINT "world"
