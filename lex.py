@@ -1,3 +1,5 @@
+# Author: Jackson szekeres
+#purpose: seprate input in to tokens
 import sys
 import enum
 
@@ -8,7 +10,7 @@ class Lexer:
         self.curChar = ''   # Current character in the string.
         self.curPos = -1    # Current position in the string.
         self.nextChar()
-
+        #setup
     # Process the next character.
     def nextChar(self):
         self.curPos += 1
@@ -84,10 +86,6 @@ class Lexer:
             startPos = self.curPos
 
             while self.curChar != '\"':
-                # Don't allow special characters in the string. No escape characters, newlines, tabs, or %.
-                # We will be using C's printf on this string.
-                #if self.curChar == '\r' or self.curChar == '\n' or self.curChar == '\t' or self.curChar == '\\' or self.curChar == '%' and  self.curChar != '/0':
-                    #self.abort("Illegal character in string.")
                 self.nextChar()
 
             tokText = self.source[startPos : self.curPos] # Get the substring.
@@ -142,11 +140,12 @@ class Lexer:
     def skipWhitespace(self):
         while self.curChar == ' ' or self.curChar == '\t' or self.curChar == '\r':
             self.nextChar()
-
+    #skip comments
     def skipComment(self):
         if self.curChar == '#':
             while self.curChar != '\n':
                 self.nextChar()
+    #not working
     def skipMultilineComment(self):
         if self.curChar == '[':
             while self.curPos != ']':
@@ -167,8 +166,6 @@ class Token:
             if kind.name == tokenText and kind.value >= 100 and kind.value < 200:
                 return kind
         return None
-
-
 # TokenType is our enum for all the types of tokens.
 class TokenType(enum.Enum):
     EOF = -1
@@ -192,6 +189,7 @@ class TokenType(enum.Enum):
     ENDWHILE = 111
     WAIT = 112
     CCODE = 113
+    RAISE = 114
     # Operators.
     EQ = 201  
     PLUS = 202
