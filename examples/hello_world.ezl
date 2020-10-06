@@ -1,5 +1,5 @@
 LET hello = "hello"
-
+LET pi = 3.14159265
 
 PRINT "finish this phrase"
 PRINT hello
@@ -11,7 +11,7 @@ IF guess == "world" THEN
     PRINT "TRUE"
 ENDIF
 IF 1 == 1 THEN
-    PRINT "pi"
+    PRINT pi
 ENDIF
 EXPORT "myfile.json"
 

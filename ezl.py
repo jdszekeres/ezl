@@ -13,6 +13,7 @@ def main():
     #status("EZL Compiler")
     # if not enough arguments sys.exit
     if len(sys.argv) < 2:
+        # this is where interpreter should be
         sys.exit("Error: Compiler needs source file as argument.")
     #open file that is last cli argument
     with open(sys.argv[-1], 'r') as inputFile:
