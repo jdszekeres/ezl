@@ -21,22 +21,11 @@ def main():
 
     # Initialize the lexer, emitter, and parser.
     lexer = Lexer(input)
-    emitter = Emitter(sys.argv[-1].split(".")[0]+".c")
+    emitter = Emitter(None)
     parser = Parser(lexer, emitter)
 
     parser.program() # Start the parser.
-    emitter.writeFile() # Write the output to file.
-    status("written to file")
-    #if no gcc argument then ignore this step
-    if not "--no-gcc" in sys.argv:
-        os.system("gcc "+sys.argv[-1].split(".")[0]+".c -o "+ sys.argv[-1].split(".")[0])
-        status("compiled")
-    #chmod +x makes the file executable
-    os.system("chmod +x "+sys.argv[-1].split(".")[0])
-    status("made execuatable")
-    #this tells you how to run this file
-    print("run this as ", end="")
-    print("./"+sys.argv[-1].split(".")[0])
+
    
 
 main()
