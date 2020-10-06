@@ -1,12 +1,14 @@
+# compiled to executable by pyinstaller and run by python3 in a command line interface
 # ezl
 easy to learn simple programming language
 # install
-download latest relase
+use the executable in directory
 # compile
 __gcc__ must be installed
 ``` bash
 ./ezl filename.ezl
 ```
+if gcc is not installed you can use the --no-gcc argument
 # run
 ``` bash
 ./filename
@@ -35,4 +37,6 @@ IF type == 4.0 THEN
 	PRINT num / numtwo
 ENDIF
 ```
-see more in [examples folder](https://github.com/jdszekeres/ezl/blob/master/examples/)
+see more in examples folder
+
+# the source code is 15% commented

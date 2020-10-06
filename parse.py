@@ -1,3 +1,7 @@
+
+# Author: Jackson szekeres
+#purpose: parse incoming data in ezl programming lanugage
+
 import sys
 from lex import *
 
@@ -6,7 +10,7 @@ class Parser:
     def __init__(self, lexer, emitter):
         self.lexer = lexer
         self.emitter = emitter
-
+        self.line = 0
         self.symbols = set()    # All variables we have declared so far.
         self.labelsDeclared = set() # Keep track of all labels declared
         self.labelsGotoed = set() # All labels goto'ed, so we know if they exist or not.
@@ -27,7 +31,7 @@ class Parser:
     # Try to match current token. If not, error. Advances the current token.
     def match(self, kind):
         if not self.checkToken(kind):
-            self.abort("Expected " + kind.name + ", got " + self.curToken.kind.name)
+            self.abort("Expected " + kind.name + ", got " + self.curToken.kind.name+" in line "+str(self.line))
         self.nextToken()
 
     # Advances the current token.
@@ -39,19 +43,19 @@ class Parser:
     # Return true if the current token is a comparison operator.
     def isComparisonOperator(self):
         return self.checkToken(TokenType.GT) or self.checkToken(TokenType.GTEQ) or self.checkToken(TokenType.LT) or self.checkToken(TokenType.LTEQ) or self.checkToken(TokenType.EQEQ) or self.checkToken(TokenType.NOTEQ)
-
+    #abort is exit with message
     def abort(self, message):
         sys.exit("Error! " + message)
 
 
-    # Production rules.
-
-    # program ::= {statement}
+#this is the main file
     def program(self):
+        #these are the included c header to run some functions
         self.emitter.headerLine("#include <stdio.h>")
         self.emitter.headerLine("#include<math.h>") 
         self.emitter.headerLine("#include <unistd.h>")
         self.emitter.headerLine('#include <time.h>')
+        self.emitter.headerLine('#include <stdlib.h>')
         self.emitter.headerLine("int main(void){")
         
         # Since some newlines are required in our grammar, need to skip the excess.
@@ -90,11 +94,24 @@ class Parser:
                 self.emitter.emit("printf(\"%" + ".2f\\n\", (float)(")
                 self.expression()
                 self.emitter.emitLine("));")
+        #CCODE (STRING)
+        #run code in c directly
         elif self.checkToken(TokenType.CCODE):
             self.nextToken()
             if self.checkToken(TokenType.STRING):
                 self.emitter.emitLine(self.curToken.text)
                 self.nextToken()
+        #RAISE (STRING)
+        #raise error
+        elif self.checkToken(TokenType.RAISE):
+            self.nextToken()
+            self.emitter.emitLine("""printf("\033[1;31m");""")
+            if self.checkToken(TokenType.STRING):
+                self.emitter.emitLine("printf(\""+self.curToken.text+"\");")
+                self.emitter.emitLine("exit(0);")
+                self.nextToken()
+        #WAIT float
+        #wait before contining
         elif self.checkToken(TokenType.WAIT): 
             self.nextToken()
             if self.checkToken(TokenType.FLOAT):
@@ -190,8 +207,9 @@ class Parser:
 
         # This is not a valid statement. Error!
         else:
-            self.abort("Invalid statement at " + self.curToken.text + " (" + self.curToken.kind.name + ")")
-
+            self.abort("Invalid statement at " + self.curToken.text + " (" + self.curToken.kind.name + ") in line "+str(self.line))
+        #line count so you know the line # for errors
+        self.line += 1
         # Newline.
         self.nl()
 
@@ -263,3 +281,4 @@ class Parser:
         # But we will allow extra newlines too, of course.
         while self.checkToken(TokenType.NEWLINE):
             self.nextToken()
+ 
