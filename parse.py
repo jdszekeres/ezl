@@ -87,10 +87,13 @@ class Parser:
             try:
                 print(str(self.hidden[self.curToken.text]))
                 self.main["PRINT line "+str(self.line)] = self.hidden[self.curToken.text]
+
+                self.nextToken()
+
             except:
                 self.main["PRINT line "+str(self.line)] = str(self.curToken.text)
                 print(str(self.curToken.text))
-            self.nextToken()
+                self.nextToken()
 
         #RAISE (STRING)
         #raise error
@@ -149,7 +152,7 @@ class Parser:
             if self.curToken.text not in self.symbols:
                 self.symbols.add(self.curToken.text)
                 var = self.curToken.text
-                #self.main[var] = ""
+                
 
            
             self.match(TokenType.IDENT)
@@ -160,9 +163,15 @@ class Parser:
                 self.main["varible "+var] = self.hidden[var]
                 self.nextToken()
             else:
-                self.expression()
+
+                
+                
                 self.hidden[var] = self.curToken.text
                 self.main["varible "+var] = self.hidden[var]
+                self.nextToken()
+            #print(self.curToken.text)   
+            #self.nextToken()
+
 
 
         # "INPUT" ident
@@ -195,7 +204,9 @@ class Parser:
         self.expression()
         # Must be at least one comparison operator and another expression.
         if self.isComparisonOperator():
-            yield self.curtoken.text()
+
+            
+
             self.nextToken()
             self.expression()
         # Can have 0 or more comparison operator and expressions.

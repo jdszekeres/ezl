@@ -1,8 +1,6 @@
-# Byte-compiled / optimized / DLL files
+
+**/*.spec
+**/build
 __pycache__
 *$py.class
 *.pyc
-# C extensions
-*.so
-.DS_Store
-*.spec

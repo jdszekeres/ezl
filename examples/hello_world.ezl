@@ -1,6 +1,15 @@
-LET hello = "lovie dovie"
+LET hello = "hello"
+
+
+PRINT "finish this phrase"
 PRINT hello
-INPUT pi
-PRINT pi
-WAIT 1
-PRINT "world"
+INPUT guess
+#WAIT 1
+
+IF guess == "world" THEN
+    PRINT "Yes that is corect"
+ENDIF
+IF guess != "world" THEN
+    PRINT "no that is incorect"
+ENDIF
+EXPORT "myfile.json"
