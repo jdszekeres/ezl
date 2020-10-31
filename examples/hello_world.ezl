@@ -4,13 +4,12 @@ LET hello = "hello"
 PRINT "finish this phrase"
 PRINT hello
 INPUT guess
-WAIT 1
-
+#WAIT 1
 
 IF guess == "world" THEN
     PRINT "Yes that is corect"
 ENDIF
-#IF guess != "world" THEN
-#    PRINT "no that is incorect"
-#ENDIF
+IF guess != "world" THEN
+    PRINT "no that is incorect"
+ENDIF
 EXPORT "myfile.json"

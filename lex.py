@@ -32,8 +32,9 @@ class Lexer:
     # Return the next token.
     def getToken(self):
         self.skipWhitespace()
-        self.skipComment()
         self.skipMultilineComment()
+        self.skipComment()
+        
         token = None
 
         # Check the first character of this token to see if we can decide what it is.
@@ -79,6 +80,10 @@ class Lexer:
                 token = Token(lastChar + self.curChar, TokenType.NOTEQ)
             else:
                 self.abort("Expected !=, got !" + self.peek())
+        elif self.curChar == "(":
+            token = Token(self.curChar, TokenType.LEFTPARENTHESIS)
+        elif self.curChar == ")":
+            token = Token(self.curChar, TokenType.RIGHTPARENTHESIS)
 
         elif self.curChar == '\"':
             # Get characters between quotations.
@@ -146,11 +151,14 @@ class Lexer:
         if self.curChar == '#':
             while self.curChar != '\n':
                 self.nextChar()
+        if self.curChar == '[-':
+            
+            self.nextChar()
+            while self.curChar != '-]':
+                self.nextChar()
     #not working
     def skipMultilineComment(self):
-        if self.curChar == "/*":
-            while self.curChar != "*/":
-                self.nextChar()
+        pass
         
 
 
@@ -172,10 +180,10 @@ class TokenType(enum.Enum):
     EOF = -1
     NEWLINE = 0
     FLOAT = 1
-    
-    IDENT = 2
-    STRING = 3
-    BOOL = 4
+    TUPLE = 2
+    IDENT = 3
+    STRING = 4
+    BOOL = 5
     # Keywords.
     LABEL = 101
     GOTO = 102
@@ -204,3 +212,5 @@ class TokenType(enum.Enum):
     LTEQ = 210
     GT = 211
     GTEQ = 212
+    LEFTPARENTHESIS = 213
+    RIGHTPARENTHESIS = 214
