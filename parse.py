@@ -11,7 +11,7 @@ class Parser:
     def __init__(self, lexer):
         self.lexer = lexer
         
-        self.line = 1
+        self.line = 0
         self.symbols = set()    # All variables we have declared so far.
         self.labelsDeclared = set() # Keep track of all labels declared
         self.labelsGotoed = set() # All labels goto'ed, so we know if they exist or not.
@@ -43,10 +43,7 @@ class Parser:
         self.curToken = self.peekToken
         self.peekToken = self.lexer.getToken()
         # No need to worry about passing the EOF, lexer handles that.
-    def backToken(self):
-        print(self.curToken.text)
-        self.curToken = self.peekToken
-        self.peekToken = self.lexer.getToken()
+
     # Return true if the current token is a comparison operator.
     def isComparisonOperator(self):
         return self.checkToken(TokenType.GT) or self.checkToken(TokenType.GTEQ) or self.checkToken(TokenType.LT) or self.checkToken(TokenType.LTEQ) or self.checkToken(TokenType.EQEQ) or self.checkToken(TokenType.NOTEQ)
@@ -67,7 +64,7 @@ class Parser:
         # Parse all the statements in the program.
         while not self.checkToken(TokenType.EOF):
             self.statement()
-            self.line += 1
+
         # Wrap things up.
 
 
@@ -90,8 +87,9 @@ class Parser:
             try:
                 print(str(self.hidden[self.curToken.text]))
                 self.main["PRINT line "+str(self.line)] = self.hidden[self.curToken.text]
-                print(self.curToken.text)
+
                 self.nextToken()
+
             except:
                 self.main["PRINT line "+str(self.line)] = str(self.curToken.text)
                 print(str(self.curToken.text))
@@ -129,23 +127,15 @@ class Parser:
                             query = query+str(float(self.curToken.text))
                         else:
                             query = query+string(self.curToken.text)
-                print(self.curToken.text)
                 self.nextToken()
             
             self.main["IF line "+str(self.line)] = str(eval(query))
-            self.nextToken()
-            self.nl()
-            
             if eval(query):
+                self.nextToken()
+                self.nl()
                 while not self.checkToken(TokenType.ENDIF):
-                        self.statement()
-            else:
-                while not self.checkToken(TokenType.ENDIF):
-                        self.nextToken()
-            
-            
-
-                
+                    self.statement()
+                self.nextToken()
         #WAIT float
         #wait before contining
         elif self.checkToken(TokenType.WAIT): 
@@ -173,6 +163,7 @@ class Parser:
                 self.main["varible "+var] = self.hidden[var]
                 self.nextToken()
             else:
+
                 
                 
                 self.hidden[var] = self.curToken.text
@@ -180,6 +171,7 @@ class Parser:
                 self.nextToken()
             #print(self.curToken.text)   
             #self.nextToken()
+
 
 
         # "INPUT" ident
@@ -202,7 +194,7 @@ class Parser:
         else:
             self.abort("Invalid statement at " + self.curToken.text + " (" + self.curToken.kind.name + ") in line "+str(self.line))
         #line count so you know the line # for errors
-        
+        self.line += 1
         # Newline.
         self.nl()
 
@@ -212,7 +204,9 @@ class Parser:
         self.expression()
         # Must be at least one comparison operator and another expression.
         if self.isComparisonOperator():
+
             
+
             self.nextToken()
             self.expression()
         # Can have 0 or more comparison operator and expressions.

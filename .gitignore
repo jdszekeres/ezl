@@ -1,2 +1,6 @@
+
 **/*.spec
 **/build
+__pycache__
+*$py.class
+*.pyc
