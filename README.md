@@ -37,5 +37,3 @@ IF type == 4.0 THEN
 ENDIF
 ```
 see more in examples folder
-
-# the source code is 15% commented
