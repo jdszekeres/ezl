@@ -2,15 +2,9 @@
 easy to learn simple programming language
 # install
 use the executable in directory
-# compile
-__gcc__ must be installed
-``` bash
-./ezl filename.ezl
-```
-if gcc is not installed you can use the --no-gcc argument
 # run
 ``` bash
-./filename
+./ezl filename.ezl
 ```
 # examples
 calculator
