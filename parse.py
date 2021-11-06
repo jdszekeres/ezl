@@ -26,7 +26,23 @@ class Parser:
     # Return true if the current token matches.
     def checkToken(self, kind):
         return kind == self.curToken.kind
+    def string(self, str_var):
+        return str("\""+str_var+"\"")
+    def is_integer(self, n):
+        try:
+            float(n)
+        except ValueError:
+            return False
+        else:
+            return True
+    def is_var(self, ident):
+        try:
+            self.hidden[ident]
 
+            return True
+        except:
+            return False
+        return False
     # Return true if the next token matches.
     def checkPeek(self, kind):
         return kind == self.peekToken.kind
@@ -47,14 +63,25 @@ class Parser:
     def isComparisonOperator(self):
         return self.checkToken(TokenType.GT) or self.checkToken(TokenType.GTEQ) or self.checkToken(TokenType.LT) or self.checkToken(TokenType.LTEQ) or self.checkToken(TokenType.EQEQ) or self.checkToken(TokenType.NOTEQ)
     #abort is exit with message
-    def is_var(self, ident):
-        try:
-            self.hidden[ident]
-            return True
-        except:
-            return False
-        return False
+    def queryify(self, query):
+
+        if self.is_var(self.curToken.text):
+
+            if self.is_integer(self.hidden[self.curToken.text]):
+                query = query+str(self.hidden[self.curToken.text])
+            else:
+                query = query + self.string(self.hidden[self.curToken.text])
+        elif self.isComparisonOperator():
+            query = query + self.curToken.text
+        elif self.is_integer(self.curToken.text):
+            query = query + str(self.curToken.text)
+        else:
+            query = query + self.string(self.curToken.text)
+
+        return query
+
     def abort(self, message):
+
         sys.exit("Error! " + message)
 
 
@@ -64,6 +91,7 @@ class Parser:
         # Since some newlines are required in our grammar, need to skip the excess.
         while self.checkToken(TokenType.NEWLINE):
             self.nextToken()
+            self.line += 1
 
         # Parse all the statements in the program.
         while not self.checkToken(TokenType.EOF):
@@ -74,18 +102,19 @@ class Parser:
 
         # "PRINT" (expression | string)
         if self.checkToken(TokenType.PRINT):
+            
             self.nextToken()
-            
-           
-            
+
+                
+            query = ""
+            while not self.checkToken(TokenType.NEWLINE):
+                query = self.queryify(query).replace('"', '')
+
+                self.nextToken()
             try:
-                print(str(self.hidden[self.curToken.text]))
-                self.main["PRINT line "+str(self.line)] = self.hidden[self.curToken.text]
-                self.nextToken()
+                print(eval(query))
             except:
-                self.main["PRINT line "+str(self.line)] = str(self.curToken.text)
-                print(str(self.curToken.text))
-                self.nextToken()
+                print(query)
 
         #RAISE (STRING)
         #raise error
@@ -95,47 +124,27 @@ class Parser:
             raise SystemError(self.curToken.text) 
             self.nextToken()
         elif self.checkToken(TokenType.IF):
-            def string(str_var):
-               return str("\""+str_var+"\"")
-            def is_integer(n):
-                try:
-                    float(n)
-                except ValueError:
-                    return False
-                else:
-                    return True
+
             self.nextToken()
              
             #print(self.curToken.text)
             query  = str("")
             while not self.checkToken(TokenType.THEN):
-                if self.is_var(self.curToken.text):
-                    if is_integer(self.hidden[self.curToken.text]):
-                        query = query+str(self.hidden[self.curToken.text])
-                    else:
-                        query = query + string(self.hidden[self.curToken.text])
-                elif self.isComparisonOperator():
-                    query = query + self.curToken.text
-                elif is_integer(self.curToken.text):
-                    query = query + str(self.curToken.text)
-                else:
-                    query = query + string(self.curToken.text)
-                if self.debug:
-                    print(self.curToken.text)
+                query = self.queryify(query)
                 self.nextToken()
-            self.nl()
+            self.nextToken()
+            
             
             self.main["IF line "+str(self.line)] = str(eval(query))
- 
             if eval(query):
 
-                self.nextToken()
+
                 self.nl()
                 while not self.checkToken(TokenType.ENDIF):
                     self.statement()
                 self.nextToken()
             else:
-                self.nextToken()
+
                 self.nl()
                 while not self.checkToken(TokenType.ENDIF):
                     self.nextToken()
@@ -161,13 +170,9 @@ class Parser:
             self.match(TokenType.IDENT)
             self.match(TokenType.EQ)
             
-            if self.checkToken(TokenType.STRING):
-                self.hidden[var] = self.curToken.text
-                self.main["varible "+var] = self.hidden[var]         
-                self.nextToken()
-            else:
-                self.hidden[var] = self.curToken.text
-                self.main["varible "+var] = self.hidden[var]
+            query = ""
+            while not self.checkToken(TokenType.NEWLINE):
+                query = self.queryify(query).strip("\"")
                 self.nextToken()
             #print(self.curToken.text)   
             #self.nextToken()
@@ -191,6 +196,20 @@ class Parser:
                 with open(self.curToken.text, "w+") as f:
                     json.dump(self.main, indent = 4, fp = f)
             self.nextToken()
+        elif self.checkToken(TokenType.REPEAT):
+            self.nextToken()
+            try:
+                repeat = int(self.curToken.text)
+            except:
+                self.abort('REPEAT has no specified int')
+            self.nextToken()
+            self.nl()
+            for i in range(0, repeat):
+                while not self.checkToken(TokenType.ENDREPEAT):
+                    self.statement()
+                    self.nextToken()
+                    
+                pass
         # This is not a valid statement. Error!
         else:
             self.abort("Invalid statement at " + self.curToken.text + " (" + self.curToken.kind.name + ") in line "+str(self.line))
@@ -205,7 +224,6 @@ class Parser:
         self.expression()
         # Must be at least one comparison operator and another expression.
         if self.isComparisonOperator():
-            
             self.nextToken()
             self.expression()
         # Can have 0 or more comparison operator and expressions.
