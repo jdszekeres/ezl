@@ -1,0 +1,11 @@
+{
+    "varible hello": "hello",
+    "varible correct": "world",
+    "PRINT line 3": "finish this phrase",
+    "PRINT line 4": "hello",
+    "varible guess": "weeorl",
+    "WAIT line 6": "1",
+    "IF line 7": "False",
+    "IF line 8": "True",
+    "PRINT line 8": "no that is incorect"
+}

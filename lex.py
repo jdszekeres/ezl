@@ -148,13 +148,12 @@ class Lexer:
             self.nextChar()
     #skip comments
     def skipComment(self):
+        
         if self.curChar == '#':
             while self.curChar != '\n':
                 self.nextChar()
-        if self.curChar == '[-':
-            
-            self.nextChar()
-            while self.curChar != '-]':
+        elif self.curChar == '|':
+            while self.curChar != '|':
                 self.nextChar()
     #not working
     def skipMultilineComment(self):
@@ -199,6 +198,8 @@ class TokenType(enum.Enum):
     CCODE = 112
     RAISE = 113
     EXPORT = 114
+
+    
     # Operators.
     EQ = 201  
     PLUS = 202
